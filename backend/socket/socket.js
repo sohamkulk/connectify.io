@@ -5,7 +5,8 @@ const onlineUsers = new Map();
 export const initSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:5173",
+      
+      origin: process.env.FRONTEND_URL,
       credentials: true
     }
   });
@@ -15,13 +16,19 @@ export const initSocket = (server) => {
 
     // User comes online
     socket.on("userOnline", (userId) => {
-      onlineUsers.set(userId, socket.id);
+      onlineUsers.set(String(userId), socket.id);
+      io.emit("onlineUsers", Array.from(onlineUsers.keys()));
+    });
+
+    // User goes offline manually (logout)
+    socket.on("userOffline", (userId) => {
+      onlineUsers.delete(String(userId));
       io.emit("onlineUsers", Array.from(onlineUsers.keys()));
     });
 
     // Send message
     socket.on("sendMessage", (message) => {
-      const receiverSocketId = onlineUsers.get(message.receiver);
+      const receiverSocketId = onlineUsers.get(String(message.receiver));
       if (receiverSocketId) {
         io.to(receiverSocketId).emit("receiveMessage", message);
       }
@@ -29,7 +36,7 @@ export const initSocket = (server) => {
 
     // Typing indicator
     socket.on("typing", ({ senderId, receiverId }) => {
-      const receiverSocketId = onlineUsers.get(receiverId);
+      const receiverSocketId = onlineUsers.get(String(receiverId));
       if (receiverSocketId) {
         io.to(receiverSocketId).emit("typing", { senderId });
       }
@@ -37,7 +44,7 @@ export const initSocket = (server) => {
 
     // Stop typing
     socket.on("stopTyping", ({ senderId, receiverId }) => {
-      const receiverSocketId = onlineUsers.get(receiverId);
+      const receiverSocketId = onlineUsers.get(String(receiverId));
       if (receiverSocketId) {
         io.to(receiverSocketId).emit("stopTyping", { senderId });
       }
@@ -45,7 +52,7 @@ export const initSocket = (server) => {
 
     // Edit message via socket
     socket.on("editMessage", (updatedMsg) => {
-      const receiverSocketId = onlineUsers.get(updatedMsg.receiver);
+      const receiverSocketId = onlineUsers.get(String(updatedMsg.receiver));
       if (receiverSocketId) {
         io.to(receiverSocketId).emit("messageEdited", updatedMsg);
       }
@@ -53,7 +60,7 @@ export const initSocket = (server) => {
 
     // Delete message via socket
     socket.on("deleteMessage", ({ messageId, receiverId }) => {
-      const receiverSocketId = onlineUsers.get(receiverId);
+      const receiverSocketId = onlineUsers.get(String(receiverId));
       if (receiverSocketId) {
         io.to(receiverSocketId).emit("messageDeleted", messageId);
       }
@@ -61,11 +68,12 @@ export const initSocket = (server) => {
 
     // User disconnects
     socket.on("disconnect", () => {
-      onlineUsers.forEach((socketId, userId) => {
+      for (const [userId, socketId] of onlineUsers.entries()) {
         if (socketId === socket.id) {
           onlineUsers.delete(userId);
+          break; 
         }
-      });
+      }
       io.emit("onlineUsers", Array.from(onlineUsers.keys()));
       console.log("User disconnected:", socket.id);
     });

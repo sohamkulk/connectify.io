@@ -4,6 +4,7 @@ backend/node_modules
 
 # Environment variables
 backend/.env
+frontend/.env
 
 # Uploads folder
 backend/uploads/*
