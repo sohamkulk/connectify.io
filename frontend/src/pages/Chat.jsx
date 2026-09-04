@@ -60,7 +60,9 @@ function Chat() {
         isSame(message.sender, selectedUserRef.current._id)
       ) {
         setMessages((prev) => [...prev, message]);
+        api.patch(`/messages/read/${message.sender}`).catch((err) => console.log(err));
       }
+      fetchUsers();
     });
 
     socket.current.on("typing", ({ senderId }) => {
@@ -126,13 +128,20 @@ function Chat() {
     }
   };
 
-  const handleSelectUser = (user) => {
+    const handleSelectUser = async (user) => {
     setSelectedUser(user);
     selectedUserRef.current = user;
     fetchMessages(user._id);
     setShowEmojiBox(false);
     setShowChat(true);
     setIsTyping(false);
+
+    try {
+      await api.patch(`/messages/read/${user._id}`);
+      fetchUsers();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleSendMessage = async () => {
@@ -142,11 +151,12 @@ function Chat() {
         receiverId: selectedUser._id,
         message: newMessage,
       });
-      setMessages((prev) => [...prev, data]);
+           setMessages((prev) => [...prev, data]);
       socket.current.emit("sendMessage", {
         ...data,
         receiver: selectedUser._id
       });
+      fetchUsers();
       socket.current.emit("stopTyping", {
         senderId: currentUserRef.current._id,
         receiverId: selectedUserRef.current._id
@@ -261,7 +271,7 @@ function Chat() {
       <div className="h-14 bg-gray-800 flex items-center justify-between px-4 md:px-6 shadow-md z-10 shrink-0">
         <div className="flex items-center gap-2">
           <Share2 className="text-gray-300" size={22} />
-          <h1 className="text-white text-lg font-bold tracking-wide">Connectify.io</h1>
+          <h1 className="text-white text-lg font-bold tracking-wide">Connectify</h1>
         </div>
         <div className="relative">
           <button
@@ -269,7 +279,7 @@ function Chat() {
             className="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 transition px-3 py-1.5 rounded-full"
           >
             {currentUser?.image ? (
-              <img src={`${BACKEND}${currentUser.image}`} alt="profile" className="w-7 h-7 rounded-full object-cover" />
+              <img src={currentUser.image.startsWith("http") ? currentUser.image : `${BACKEND}${currentUser.image}`} alt="profile" className="w-7 h-7 rounded-full object-cover" />
             ) : (
               <div className="w-7 h-7 rounded-full bg-gray-500 flex items-center justify-center text-white font-bold text-xs">
                 {currentUser?.name?.charAt(0).toUpperCase()}
@@ -285,7 +295,7 @@ function Chat() {
                   <X size={16} />
                 </button>
                 {currentUser?.image ? (
-                  <img src={`${BACKEND}${currentUser.image}`} alt="profile" className="w-16 h-16 rounded-full object-cover border-2 border-gray-500" />
+                  <img src={currentUser.image.startsWith("http") ? currentUser.image : `${BACKEND}${currentUser.image}`} alt="profile" className="w-16 h-16 rounded-full object-cover border-2 border-gray-500" />
                 ) : (
                   <div className="w-16 h-16 rounded-full bg-gray-600 flex items-center justify-center text-white font-bold text-2xl">
                     {currentUser?.name?.charAt(0).toUpperCase()}
@@ -336,7 +346,7 @@ function Chat() {
                   <div className="relative shrink-0">
                     {user.image ? (
                       <img
-                        src={`${BACKEND}${user.image}`}
+                        src={user.image.startsWith("http") ? user.image : `${BACKEND}${user.image}`}
                         alt={user.name}
                         className="w-11 h-11 rounded-full object-cover cursor-pointer ring-2 ring-transparent hover:ring-gray-500 transition"
                         onClick={(e) => { e.stopPropagation(); setSelectedProfile(user); }}
@@ -351,10 +361,15 @@ function Chat() {
                     )}
                     <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-gray-200 ${onlineUsers.includes(user._id) ? "bg-green-500" : "bg-red-400"}`}></span>
                   </div>
-                  <div className="flex-1 min-w-0">
+                                    <div className="flex-1 min-w-0">
                     <p className="font-semibold text-gray-800 text-sm">{user.name}</p>
                     <p className="text-xs text-gray-500 truncate">{onlineUsers.includes(user._id) ? "Online" : "Offline"}</p>
                   </div>
+                  {user.unreadCount > 0 && (
+                    <span className="bg-green-500 text-white text-xs font-bold min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center shrink-0">
+                      {user.unreadCount}
+                    </span>
+                  )}
                 </div>
               ))
             )}
@@ -368,7 +383,7 @@ function Chat() {
               <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center">
                 <Share2 size={36} className="text-gray-400" />
               </div>
-              <h2 className="text-xl font-bold text-gray-600">Welcome to Connectify.io</h2>
+              <h2 className="text-xl font-bold text-gray-600">Welcome to Connectify</h2>
               <p className="text-gray-400 text-sm text-center">Select a user from the left to start chatting 💬</p>
             </div>
           ) : (
@@ -381,7 +396,7 @@ function Chat() {
                   </button>
                   {selectedUser.image ? (
                     <img
-                      src={`${BACKEND}${selectedUser.image}`}
+                      src={selectedUser.image.startsWith("http") ? selectedUser.image : `${BACKEND}${selectedUser.image}`}
                       alt={selectedUser.name}
                       className="w-9 h-9 rounded-full object-cover cursor-pointer hover:ring-2 hover:ring-gray-400 transition"
                       onClick={() => setSelectedProfile(selectedUser)}
@@ -500,7 +515,7 @@ function Chat() {
                 <X size={20} />
               </button>
               {selectedProfile.image ? (
-                <img src={`${BACKEND}${selectedProfile.image}`} alt={selectedProfile.name} className="w-24 h-24 rounded-full object-cover border-4 border-gray-600" />
+                <img src={selectedProfile.image.startsWith("http") ? selectedProfile.image : `${BACKEND}${selectedProfile.image}`} alt={selectedProfile.name} className="w-24 h-24 rounded-full object-cover border-4 border-gray-600" />
               ) : (
                 <div className="w-24 h-24 rounded-full bg-gray-600 flex items-center justify-center text-white font-bold text-4xl">
                   {selectedProfile.name.charAt(0).toUpperCase()}

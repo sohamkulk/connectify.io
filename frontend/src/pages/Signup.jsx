@@ -17,7 +17,7 @@ function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState("");
+
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -79,11 +79,7 @@ function Signup() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      setSuccessMessage("🎉 Signup successful! Redirecting to login...");
-
-      setTimeout(() => {
-        navigate("/chat");
-      }, 2000);
+    navigate("/chat");
 
     } catch (error) {
       alert(error.response?.data?.message || "Signup failed");
@@ -91,14 +87,14 @@ function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 py-6 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 py-6 px-4">
       <div className="bg-white p-6 rounded-3xl shadow-xl w-full max-w-md">
 
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-1">
-          <Share2 className="text-indigo-600" size={26} />
-          <h1 className="text-2xl font-bold text-indigo-600 tracking-wide">
-            Connectify.io
+          <Share2 className="text-gray-700" size={26} />
+          <h1 className="text-2xl font-bold text-gray-700 tracking-wide">
+            Connectify
           </h1>
         </div>
 
@@ -108,13 +104,7 @@ function Signup() {
           Create your account
         </h2>
 
-        {/* Success Message */}
-        {successMessage && (
-          <div className="bg-green-100 text-green-700 text-sm text-center px-4 py-2 rounded-xl mb-3">
-            {successMessage}
-          </div>
-        )}
-
+    
         <form className="space-y-3" onSubmit={handleSubmit}>
 
           {/* Name */}
@@ -130,7 +120,7 @@ function Signup() {
                 setName(e.target.value);
                 setErrors((prev) => ({ ...prev, name: "" }));
               }}
-              className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-500"
             />
             {errors.name && (
               <p className="text-red-500 text-xs mt-1">{errors.name}</p>
@@ -150,7 +140,7 @@ function Signup() {
                 setEmail(e.target.value);
                 setErrors((prev) => ({ ...prev, email: "" }));
               }}
-              className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-500"
             />
             {errors.email && (
               <p className="text-red-500 text-xs mt-1">{errors.email}</p>
@@ -197,7 +187,7 @@ function Signup() {
                 setConfirmPassword(e.target.value);
                 setErrors((prev) => ({ ...prev, confirmPassword: "" }));
               }}
-              className="w-full border rounded-xl px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full border rounded-xl px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-gray-500"
             />
             <button
               type="button"
@@ -218,7 +208,7 @@ function Signup() {
             </label>
 
             {!imagePreview ? (
-              <label className="flex flex-col items-center justify-center border-2 border-dashed border-indigo-400 rounded-xl py-3 cursor-pointer hover:bg-indigo-50 transition">
+              <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-400 rounded-xl py-3 cursor-pointer hover:bg-gray-50 transition">
                 <span className="text-sm text-gray-600">Click to upload image</span>
                 <input
                   type="file"
@@ -247,7 +237,7 @@ function Signup() {
 
           <button
             type="submit"
-            className="w-full bg-indigo-600 text-white py-2 rounded-xl text-sm hover:bg-indigo-700 transition"
+            className="w-full bg-gray-700 text-white py-2 rounded-xl text-sm hover:bg-gray-800 transition"
           >
             Sign Up
           </button>
@@ -256,7 +246,7 @@ function Signup() {
 
         <p className="text-sm text-center mt-4">
           Already have an account?{" "}
-          <Link to="/login" className="text-indigo-600 font-semibold hover:underline">
+          <Link to="/login" className="text-gray-700 font-semibold hover:underline">
             Login
           </Link>
         </p>

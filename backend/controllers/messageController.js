@@ -93,3 +93,21 @@ export const deleteMessage = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+// mark all message as read
+export const markAsRead = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const myId = req.user._id;
+
+    await Message.updateMany(
+      { sender: userId, receiver: myId, read: false },
+      { $set: { read: true } }
+    );
+
+    res.json({ message: "Messages marked as read" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

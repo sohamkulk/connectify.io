@@ -1,4 +1,4 @@
-# Connectify.io
+# Connectify
 
 A real-time full-stack chat application built with the MERN stack and Socket.io.
 

@@ -28,14 +28,14 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 py-10 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 py-10 px-4">
       <div className="bg-white p-8 rounded-3xl shadow-xl w-full max-w-md">
 
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-2">
-          <Share2 className="text-indigo-600" size={28} />
-          <h1 className="text-2xl font-bold text-indigo-600 tracking-wide">
-            Connectify.io
+          <Share2 className="text-gray-700" size={28} />
+          <h1 className="text-2xl font-bold text-gray-700 tracking-wide">
+            Connectify
           </h1>
         </div>
 
@@ -61,7 +61,7 @@ function Login() {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
             />
           </div>
 
@@ -76,7 +76,7 @@ function Login() {
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border rounded-xl px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full border rounded-xl px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-gray-500"
             />
             <button
               type="button"
@@ -90,7 +90,7 @@ function Login() {
           {/* Button */}
           <button
             type="submit"
-            className="w-full bg-indigo-600 text-white py-2 rounded-xl hover:bg-indigo-700 transition"
+            className="w-full bg-gray-700 text-white py-2 rounded-xl hover:bg-gray-800 transition"
           >
             Login
           </button>
@@ -102,7 +102,7 @@ function Login() {
           Don’t have an account?{" "}
           <Link
             to="/signup"
-            className="text-indigo-600 font-semibold hover:underline"
+            className="text-gray-700 font-semibold hover:underline"
           >
             Sign Up
           </Link>

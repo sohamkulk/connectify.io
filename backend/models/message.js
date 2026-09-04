@@ -19,7 +19,11 @@ const messageSchema = mongoose.Schema({
     type: Boolean,
     default: false
   },
-  deletedForEveryone: {
+   deletedForEveryone: {
+    type: Boolean,
+    default: false
+  },
+  read: {
     type: Boolean,
     default: false
   }

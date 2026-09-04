@@ -26,7 +26,7 @@ const clearCookie = (res) => {
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : null;
+   const image = req.file ? req.file.path : null;
 
     const userExists = await User.findOne({ email });
     if (userExists) {
