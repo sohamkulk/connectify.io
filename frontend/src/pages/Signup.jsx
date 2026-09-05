@@ -75,11 +75,12 @@ function Signup() {
         formData.append("image", imageFile);
       }
 
-      await api.post("/auth/register", formData, {
+      const { data } = await api.post("/auth/register", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-    navigate("/chat");
+      localStorage.setItem("user", JSON.stringify(data));
+      navigate("/chat");
 
     } catch (error) {
       alert(error.response?.data?.message || "Signup failed");
@@ -104,7 +105,7 @@ function Signup() {
           Create your account
         </h2>
 
-    
+
         <form className="space-y-3" onSubmit={handleSubmit}>
 
           {/* Name */}
